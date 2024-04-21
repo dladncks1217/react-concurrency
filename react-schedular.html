@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .hi {
+        height: 300px;
+        border: 1px solid black;
+      }
+
+      .hi:hover {
+        background-color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hi"></div>
+    <script>
+      let jobQueue = [];
+
+      function fibo(num) {
+        if (num === 0) return 0;
+        if (num === 1) return 1;
+        return fibo(num - 1) + fibo(num - 2);
+      }
+
+      function pushJob(job) {
+        let resolve;
+
+        const p = new Promise((_resolve) => {
+          resolve = _resolve;
+        });
+
+        const jobItem = {
+          execute: async () => {
+            resolve(await job());
+          },
+          promise: p,
+        };
+
+        jobQueue.push(jobItem);
+
+        return p;
+      }
+
+      function fiberFibo(num) {
+        if (num === 0) return 0;
+        if (num === 1) return 1;
+        console.log(num);
+        const result1 = pushJob(() => fiberFibo(num - 1));
+        const result2 = pushJob(() => fiberFibo(num - 2));
+
+        return result1 + result2;
+      }
+
+      setInterval(() => {
+        const copy = jobQueue.slice();
+        jobQueue = [];
+
+        copy.forEach((job) => {
+          job.execute();
+        });
+      }, 100);
+
+      async function haha() {
+        await console.log(fiberFibo(22));
+        // await console.log(fibo(43));
+      }
+      haha();
+    </script>
+  </body>
+</html>
