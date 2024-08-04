@@ -1,0 +1,17 @@
+.texts {
+  background-color: #ffffff;
+  animation: 0.3s view ease-in forwards;
+}
+
+.texts::after {
+  content: "렌더 종료: " attr(data-will-set);
+}
+
+@keyframes view {
+  0% {
+    background-color: #546382;
+  }
+  100% {
+    background-color: #ffffff;
+  }
+}
